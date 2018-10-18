@@ -326,6 +326,7 @@ namespace TheArtOfDev.HtmlRenderer.Adapters
             return CreateFontInt(family, size, style);
         }
 
+        public RTimer CreateTimer() => CreateTimerInt();
 
         #region Private/Protected methods
 
@@ -450,6 +451,11 @@ namespace TheArtOfDev.HtmlRenderer.Adapters
         /// <param name="extension">the extension of the image for save dialog</param>
         /// <param name="control">optional: the control to show the dialog on</param>
         protected virtual void SaveToFileInt(RImage image, string name, string extension, RControl control = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual RTimer CreateTimerInt()
         {
             throw new NotImplementedException();
         }

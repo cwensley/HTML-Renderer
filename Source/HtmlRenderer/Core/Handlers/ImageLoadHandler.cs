@@ -84,8 +84,15 @@ namespace TheArtOfDev.HtmlRenderer.Core.Handlers
         /// </summary>
         private bool _disposed;
 
-        #endregion
 
+        /// <summary>
+        /// Timer for animated images
+        /// </summary>
+        private RTimer _timer;
+
+        private int _currentFrame;
+
+        #endregion
 
         /// <summary>
         /// Init.
@@ -365,7 +372,14 @@ namespace TheArtOfDev.HtmlRenderer.Core.Handlers
             if (_disposed)
                 ReleaseObjects();
             else
+            {
+                if (_image.Frames?.Count > 1)
+                {
+                    // it is an animated image, begin animating!
+                    CreateAnimationTimer();
+                }
                 _loadCompleteCallback(_image, _imageRectangle, async);
+            }
         }
 
         /// <summary>
@@ -375,6 +389,12 @@ namespace TheArtOfDev.HtmlRenderer.Core.Handlers
         {
             lock (_loadCompleteCallback)
             {
+                if (_timer != null)
+                {
+                    _timer.Stop();
+                    _timer.Dispose();
+                    _timer = null;
+                }
                 if (_releaseImageObject && _image != null)
                 {
                     _image.Dispose();
@@ -388,6 +408,31 @@ namespace TheArtOfDev.HtmlRenderer.Core.Handlers
             }
         }
 
+        private void CreateAnimationTimer()
+        {
+            if (_timer != null)
+                return;
+
+            _currentFrame = 0;
+            _timer = _htmlContainer.Adapter.CreateTimer();
+            _timer.Interval = _image.Frames[_currentFrame].FrameDelay;
+            _timer.Elapsed += timer_Elapsed;
+            _timer.Start();
+        }
+
+        private void timer_Elapsed(object sender, EventArgs e)
+        {
+            _currentFrame++;
+            if (_currentFrame >= _image.Frames.Count)
+                _currentFrame = 0;
+            _image.SetActiveFrame(_currentFrame);
+
+            _timer.Interval = _image.Frames[_currentFrame].FrameDelay;
+            _timer.Start();
+            _htmlContainer.RequestRefresh(false);
+        }
+
         #endregion
+
     }
 }

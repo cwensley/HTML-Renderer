@@ -11,6 +11,7 @@
 // "The Art of War"
 
 using System;
+using System.Collections.Generic;
 
 namespace TheArtOfDev.HtmlRenderer.Adapters
 {
@@ -28,6 +29,23 @@ namespace TheArtOfDev.HtmlRenderer.Adapters
         /// Get the height, in pixels, of the image.
         /// </summary>
         public abstract double Height { get; }
+
+        /// <summary>
+        /// Gets the frames of the image, or null if animation is not supported.
+        /// </summary>
+        /// <remarks>
+        /// Non-animated images may return a single frame.
+        /// </remarks>
+        /// <value>The frames.</value>
+        public virtual IList<RImageFrame> Frames => null;
+
+        /// <summary>
+        /// Sets the active frame to display when painted.
+        /// </summary>
+        /// <param name="frame">Frame to display for this image.</param>
+        public virtual void SetActiveFrame(int frame)
+        {
+        }
 
         public abstract void Dispose();
     }
